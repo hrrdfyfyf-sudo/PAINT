@@ -1,45 +1,9 @@
-name: Build Android APK
-
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Java JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Accept Android Licenses
-        run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install Bubblewrap CLI
-        run: npm install -g @bubblewrap/cli
-
-      - name: Build Android APK
-        run: |
-          bubblewrap init --manifest="https://hrrdfyfyf-sudo.github.io/PAINT/manifest.json" --skip-asks
-          bubblewrap build --skip-asks
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Android-APK
-          path: ./*.apk
-          
+- name: Configure Bubblewrap
+  run: |
+    mkdir -p ~/.bubblewrap
+    cat > ~/.bubblewrap/config.json << EOF
+    {
+      "jdkPath": "$JAVA_HOME",
+      "androidSdkPath": "$ANDROID_HOME"
+    }
+    EOF
