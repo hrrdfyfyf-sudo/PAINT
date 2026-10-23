@@ -1,9 +1,43 @@
-- name: Configure Bubblewrap
-  run: |
-    mkdir -p ~/.bubblewrap
-    cat > ~/.bubblewrap/config.json << EOF
-    {
-      "jdkPath": "$JAVA_HOME",
-      "androidSdkPath": "$ANDROID_HOME"
-    }
-    EOF
+name: Build Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli
+
+      - name: Configure Bubblewrap
+        run: |
+          mkdir -p ~/.bubblewrap
+          echo "{\"jdkPath\": \"$JAVA_HOME\", \"androidSdkPath\": \"$ANDROID_HOME\"}" > ~/.bubblewrap/config.json
+
+      - name: Build Android APK
+        run: |
+          yes | bubblewrap init --manifest="https://hrrdfyfyf-sudo.github.io/PAINT/manifest.json" --skip-asks || true
+          yes | bubblewrap build --skipPwaValidation
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-apk
+          path: "*.apk"
