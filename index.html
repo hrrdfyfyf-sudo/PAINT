@@ -21,37 +21,4 @@
 </div>
 <canvas id="c"></canvas>
 <script>
-const c = document.getElementById('c');
-const ctx = c.getContext('2d');
-function resize() {
-  c.width = innerWidth;
-  c.height = innerHeight - 52;
-}
-resize();
-let drawing = false;
-function pos(e) {
-  const r = c.getBoundingClientRect();
-  return { x: e.clientX - r.left, y: e.clientY - r.top };
-}
-c.addEventListener('pointerdown', e => {
-  drawing = true;
-  const p = pos(e);
-  ctx.beginPath();
-  ctx.moveTo(p.x, p.y);
-});
-c.addEventListener('pointermove', e => {
-  if (!drawing) return;
-  const p = pos(e);
-  ctx.strokeStyle = document.getElementById('color').value;
-  ctx.lineWidth = document.getElementById('size').value;
-  ctx.lineCap = 'round';
-  ctx.lineTo(p.x, p.y);
-  ctx.stroke();
-});
-addEventListener('pointerup', () => drawing = false);
-document.getElementById('clear').onclick = () => ctx.clearRect(0, 0, c.width, c.height);
-
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-</script>
-</body>
-</html>
+cons
